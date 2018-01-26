@@ -1,0 +1,79 @@
+// aisdkontrrab.cpp : Defines the entry point for the console application.
+
+#include <iostream>
+#include <string>
+#include "btree.h"
+
+using namespace std;
+
+int main()
+{
+	setlocale(LC_CTYPE, "ru-RU");
+	cout << "Меню: " << endl;
+	cout << "  0 - выход" << endl;
+	cout << "  1 - количество узлов" << endl;
+	cout << "  2 - очистка дерева" << endl;
+	cout << "  3 - пустое ли дерево" << endl;
+	cout << "  4 - поиск по ключу" << endl;
+	cout << "  5 - добавить элемент" << endl;
+	cout << "  6 - удалить по ключу" << endl;
+	cout << "  7 - обход дерева" << endl;
+	cout << "  8 - поиск по проядковому номеру" << endl;
+	cout << "  9 - вывести структуру дерева" << endl << endl;
+
+	BTree<int, int> tree;
+	while (true)
+	{
+		cout << ">> ";
+		int command;
+		cin >> command;
+		int key, value, index;
+		switch (command)
+		{
+		case 0:
+			return 0;
+		case 1:
+			cout << tree.getSize() << endl;
+			break;
+		case 2:
+			tree.clear();
+			break;
+		case 3:
+			cout << (tree.isEmpty() ? "Дерево пустое" : "Дерево не пустое") << endl;
+			break;
+		case 4:
+			cout << "Поиск по ключу. Введите ключ:" << endl;
+			cin >> key;
+			cout << (!tree.find(key, value) ? "Узел не найден" : to_string(value)) << endl;
+			break;
+		case 5:
+			cout << "Добавление. Введите ключ:" << endl;
+			cin >> key;
+			cout << "Введите значение:" << endl;
+			cin >> value;
+			tree.insert(key, value);
+			break;
+		case 6:
+			cout << "Удаление. Введите ключ:" << endl;
+			cin >> key;
+			tree.remove(key);
+			break;
+		case 7:
+			tree.print();
+			cout << endl;
+			break;
+		case 8:
+			cout << "Поиск по индексу. Введите индекс:" << endl;
+			cin >> index;
+			cout << tree.findByIndex(index) << endl;
+			break;
+		case 9:
+			tree.printStructure();
+			break;
+		default:
+			cout << "Команда не найдена" << endl;
+		}
+	}
+
+	return 0;
+}
