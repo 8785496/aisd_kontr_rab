@@ -19,7 +19,8 @@ int main()
 	cout << "  6 - удалить по ключу" << endl;
 	cout << "  7 - обход дерева" << endl;
 	cout << "  8 - поиск по про€дковому номеру" << endl;
-	cout << "  9 - вывести структуру дерева" << endl << endl;
+	cout << "  9 - вывести структуру дерева" << endl;
+	cout << "  10 - заполнить дерево тестовыми данными" << endl << endl;
 
 	BTree<int, int> tree;
 	while (true)
@@ -56,7 +57,7 @@ int main()
 		case 6:
 			cout << "”даление. ¬ведите ключ:" << endl;
 			cin >> key;
-			tree.remove(key);
+			cout << (tree.remove(key) ? "Ёлемент удален" : "Ёлемент не удален") << endl;
 			break;
 		case 7:
 			tree.print();
@@ -68,6 +69,16 @@ int main()
 			cout << tree.findByIndex(index) << endl;
 			break;
 		case 9:
+			tree.printStructure();
+			break;
+		case 10:
+			tree.insert(10, 10);
+			tree.insert(11, 11);
+			tree.insert(7, 7);
+			tree.insert(5, 5);
+			tree.insert(6, 6);
+			tree.insert(8, 8);
+			tree.insert(9, 9);
 			tree.printStructure();
 			break;
 		default:

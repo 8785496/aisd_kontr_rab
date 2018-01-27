@@ -1,7 +1,5 @@
 #pragma once
 
-#include <string>
-
 template <typename K, typename V> class BTree
 {
 private:
@@ -19,11 +17,6 @@ private:
 			this->value = value;
 			this->right = nullptr;
 			this->left = nullptr;
-		}
-		~Node()
-		{
-			delete this->right;
-			delete this->left;
 		}
 	};
 	Node *root;
@@ -118,13 +111,136 @@ public:
 			}
 		}
 	}
-	void insert(K key, V value)
+	bool insert(K key, V value)
 	{
-		_insert(&root, key, value);
+		if (root == nullptr)
+		{
+			root = new Node(key, value);
+			return true;
+		}
+		Node *current = root;
+		Node *previous = nullptr;
+		while (current != nullptr)
+		{
+			previous = current;
+			if (key == current->key)
+			{
+				return false;
+			}
+			if (key < current->key)
+			{
+				current = current->left;
+			}
+			else
+			{
+				current = current->right;
+			}
+		}
+		if (key < previous->key)
+		{
+			previous->left = new Node(key, value);
+		}
+		else
+		{
+			previous->right = new Node(key, value);
+		}
+		return true;
 	}
-	void remove(K key)
+	bool remove(K key)
 	{
-		// TODO
+		int f = 0; int s = 0; Node *P = nullptr, *Q, *Lp, *Rp, *T;
+		T = root;
+		if (T == nullptr)
+		{
+			return false; // Дерево пустое
+		}
+		while (T != nullptr && f == 0)
+		{
+			if (key < T->key)
+			{
+				s = 1; P = T; T = T->left;
+			}
+			else if (key > T->key)
+			{
+				s = -1; P = T; T = T->right;
+			}
+			else
+			{
+				f = 1;
+			}
+		}
+		if (T == nullptr) // ключ не найден
+		{
+			return false;
+		}
+		if (T->left == 0 && T->right == 0) // удаляется элемент без потомков - лист
+		{
+			if (T == root) // в дереве только один элемент - корень дерева
+			{
+				clear();
+				return true;
+			}
+			else
+			{
+				if (s == 1)
+					P->left = nullptr;
+				else
+					P->right = nullptr;
+			}
+			delete T;  
+			return true;
+		}
+		if (T->left != nullptr && T->right != nullptr) // удаляется элемент с двумя потомками
+		{
+			Q = T->left; // по левой ветви на уровень ниже
+			if (Q->right == nullptr) // если у него нет правого поддерева
+			{
+				Rp = T->right; // то он заменяет удаляемый узел
+				*T = *Q; T->right = Rp;
+			}
+			else // правое поддерево есть
+			{
+				while (Q->right != nullptr)  // по нему до конца правой ветви
+				{
+					P = Q;  Q = Q->right;
+				}
+				Lp = T->left; Rp = T->right;  // удаляемый элемент заменяем
+				*T = *Q; T->right = Rp; T->left = Lp; // на конечный правый,
+				P->right = Q->left; // сохраняя указатели удаляемого
+			}
+			delete Q;
+			return true;
+		}
+		if (T->left != nullptr) // удаляется элемент с одним потомком
+		{
+			if (s == 1)
+				P->left = T->right;
+			else
+				if (s == -1)
+					P->right = T->left;
+				else
+				{
+					Q = T->left;
+					*T = *Q;
+					delete Q; return true;
+				}
+		}
+		else
+		{
+			if (s == 1)
+				P->left = T->right;
+			else
+				if (s == -1)
+					P->right = T->right;
+				else
+				{
+					Q = T->right;
+					*T = *Q;
+					delete Q; return true;
+				}
+		}
+		delete T;
+		return true;
 	}
 	K findByIndex(int index)
 	{
