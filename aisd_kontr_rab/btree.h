@@ -8,7 +8,7 @@ private:
 	public:
 		K key;
 		V value;
-		int index;
+		int countNode;
 		Node *right;
 		Node *left;
 		Node(K key, V value)
@@ -18,6 +18,8 @@ private:
 			this->right = nullptr;
 			this->left = nullptr;
 		}
+		~Node()
+		{}
 	};
 	Node *root;
 	void _printStructure(Node *node, int level)
@@ -29,7 +31,7 @@ private:
 			{
 				std::cout << "    ";
 			}
-			std::cout << node->key << std::endl;
+			std::cout << "(" << node->key << ") " << node->countNode << std::endl;
 			_printStructure(node->left, level + 1);
 		}
 	}
@@ -73,6 +75,52 @@ private:
 			std::cout << node->key << ' ';
 		}
 	}
+	int _index(Node *node)
+	{
+		if (node == nullptr)
+		{
+			return 0;
+		}
+		node->countNode = _index(node->left) + _index(node->right) + 1;
+		return node->countNode;
+	}
+	Node *_findByIndex(Node *node, int index)
+	{
+		if (node == nullptr)
+		{
+			return node;
+		}
+		int countNode;
+		if (node->left == nullptr)
+		{
+			countNode = 0;
+		}
+		else
+		{
+			countNode = node->left->countNode;
+		}
+		if (countNode > index) // поиск в левом поддереве
+		{
+			return _findByIndex(node->left, index);
+		}
+		else if (countNode < index) // поиск в правом поддереве
+		{
+			return _findByIndex(node->right, index - countNode - 1);
+		}
+		else
+		{
+			return node;
+		}
+	}
+	void _clear(Node *node)
+	{
+		if (node != nullptr)
+		{
+			_clear(node->left);
+			_clear(node->right);
+			delete node;
+		}
+	}
 public:
 	int getSize()
 	{
@@ -80,7 +128,7 @@ public:
 	}
 	void clear()
 	{
-		delete this->root;
+		_clear(root);
 		root = nullptr;
 	}
 	bool isEmpty()
@@ -144,6 +192,7 @@ public:
 		{
 			previous->right = new Node(key, value);
 		}
+		_index(root); // вычисление количества узлов в поддеревьях
 		return true;
 	}
 	bool remove(K key)
@@ -169,11 +218,13 @@ public:
 				f = 1;
 			}
 		}
-		if (T == nullptr) // ключ не найден
+		// ключ не найден
+		if (T == nullptr) 
 		{
 			return false;
 		}
-		if (T->left == 0 && T->right == 0) // удаляется элемент без потомков - лист
+		// удаляется элемент без потомков - лист
+		if (T->left == 0 && T->right == 0) 
 		{
 			if (T == root) // в дереве только один элемент - корень дерева
 			{
@@ -187,10 +238,11 @@ public:
 				else
 					P->right = nullptr;
 			}
-			delete T;  
+			delete T; _index(root);  
 			return true;
 		}
-		if (T->left != nullptr && T->right != nullptr) // удаляется элемент с двумя потомками
+		// удаляется элемент с двумя потомками
+		if (T->left != nullptr && T->right != nullptr) 
 		{
 			Q = T->left; // по левой ветви на уровень ниже
 			if (Q->right == nullptr) // если у него нет правого поддерева
@@ -208,10 +260,11 @@ public:
 				*T = *Q; T->right = Rp; T->left = Lp; // на конечный правый,
 				P->right = Q->left; // сохраняя указатели удаляемого
 			}
-			delete Q;
+			delete Q; _index(root);
 			return true;
 		}
-		if (T->left != nullptr) // удаляется элемент с одним потомком
+		// удаляется элемент с одним потомком
+		if (T->left != nullptr) 
 		{
 			if (s == 1)
 				P->left = T->right;
@@ -222,7 +275,8 @@ public:
 				{
 					Q = T->left;
 					*T = *Q;
-					delete Q; return true;
+					delete Q; _index(root);
+					return true;
 				}
 		}
 		else
@@ -236,19 +290,36 @@ public:
 				{
 					Q = T->right;
 					*T = *Q;
-					delete Q; return true;
+					delete Q; _index(root);
+					return true;
 				}
 		}
-		delete T;
+		delete T; _index(root);
 		return true;
 	}
-	K findByIndex(int index)
+	bool findByIndex(int index, K &value)
 	{
-		return K(); // TODO
+		Node *node = _findByIndex(root, index);
+		if (node == nullptr)
+		{
+			return false;
+		}
+		else
+		{
+			value = node->value;
+			return true;
+		}
 	}
 	void print()
 	{
-		_print(root);
+		if (root == nullptr)
+		{
+			std::cout << "Дерево пустое";
+		}
+		else
+		{
+			_print(root);
+		}
 	};
 	void printStructure()
 	{

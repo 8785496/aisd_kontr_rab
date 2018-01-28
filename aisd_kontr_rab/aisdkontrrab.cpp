@@ -34,7 +34,7 @@ int main()
 		case 0:
 			return 0;
 		case 1:
-			cout << tree.getSize() << endl;
+			cout << "Количество узлов: " << tree.getSize() << endl;
 			break;
 		case 2:
 			tree.clear();
@@ -43,30 +43,31 @@ int main()
 			cout << (tree.isEmpty() ? "Дерево пустое" : "Дерево не пустое") << endl;
 			break;
 		case 4:
-			cout << "Поиск по ключу. Введите ключ:" << endl;
+			cout << "Поиск по ключу. Введите ключ: ";
 			cin >> key;
 			cout << (!tree.find(key, value) ? "Узел не найден" : to_string(value)) << endl;
 			break;
 		case 5:
-			cout << "Добавление. Введите ключ:" << endl;
+			cout << "Добавление. Введите ключ: ";
 			cin >> key;
-			cout << "Введите значение:" << endl;
+			cout << "Введите значение: ";
 			cin >> value;
 			tree.insert(key, value);
 			break;
 		case 6:
-			cout << "Удаление. Введите ключ:" << endl;
+			cout << "Удаление. Введите ключ: ";
 			cin >> key;
 			cout << (tree.remove(key) ? "Элемент удален" : "Элемент не удален") << endl;
 			break;
 		case 7:
+			cout << "Восходящий обход дерва по схеме L -> R -> t" << endl;
 			tree.print();
 			cout << endl;
 			break;
 		case 8:
-			cout << "Поиск по индексу. Введите индекс:" << endl;
+			cout << "Поиск по индексу. Введите индекс: ";
 			cin >> index;
-			cout << tree.findByIndex(index) << endl;
+			cout << (tree.findByIndex(index, value) ? to_string(value) : "Элемент не найден") << endl;
 			break;
 		case 9:
 			tree.printStructure();
